@@ -3,8 +3,15 @@ import { writable } from "svelte/store";
 export interface Metric {
   node_id: string;
   cpu: number;
-  memory: number;
+  cpu_model: string;
+  used_memory: number;
+  total_memory: number;
+  uptime: number;
+  platform: string;
+  used_space: number;
+  total_space: number;
 }
+
 
 export const metrics = writable<Metric[]>([]);
 

@@ -1,42 +1,64 @@
 <script lang="ts">
-    import { metrics, startMetricsPolling } from "../stores/metrics";
-    import { onDestroy, onMount } from "svelte";
-    
-    let pollingHandle: number | null = null;
-    
-    onMount(() => {
-      console.log("Starting metrics polling...");
-      pollingHandle = startMetricsPolling();
-    });
-    
-    onDestroy(() => {
-      if (pollingHandle !== null) {
-        clearInterval(pollingHandle);
-      }
-    });
-  </script>
-  
-  <main class="bg-gray-100 min-h-screen flex items-center justify-center p-8">
-    <div class="bg-white shadow-xl rounded-lg w-full max-w-4xl p-6">
-      <h1 class="text-3xl font-bold text-center text-indigo-600 mb-6">Metrics Dashboard</h1>
-      
-      {#if $metrics.length > 0}
-        <ul class="space-y-4">
-          {#each $metrics as metric}
-            <li class="bg-gray-50 p-4 rounded-lg shadow-md">
-              <div class="flex justify-between items-center">
-                <span class="text-lg font-semibold text-gray-700">Node: {metric.node_id}</span>
-                <div class="text-sm text-gray-500">{metric.cpu.toFixed(2)}% CPU</div>
-              </div>
-              <div class="text-sm text-gray-500 mt-2">
-                Memory: {metric.memory} MB
-              </div>
-            </li>
-          {/each}
-        </ul>
-      {:else}
-        <p class="text-center text-gray-500">No metrics available</p>
-      {/if}
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+  import { Activity, Cpu, MemoryStick, MemoryStickIcon } from 'lucide-svelte';
+	import { metrics, startMetricsPolling } from '../stores/metrics';
+	import { onDestroy, onMount } from 'svelte';
+
+	let pollingHandle: number | null = null;
+
+	onMount(() => {
+		console.log('Starting metrics polling...');
+		pollingHandle = startMetricsPolling();
+	});
+
+	onDestroy(() => {
+		if (pollingHandle !== null) {
+			clearInterval(pollingHandle);
+		}
+	});
+
+  function convertSeconds(seconds: number) {
+    let days = Math.floor(seconds / (3600 * 24));
+    seconds -= days * 3600 * 24;
+    let hrs = Math.floor(seconds / 3600);
+    seconds -= hrs * 3600;
+    let mnts = Math.floor(seconds / 60);
+    seconds -= mnts * 60;
+
+    return { days, hrs, mnts, seconds };
+}
+</script>
+
+<div
+	class="mx-auto my-auto flex min-h-screen max-w-96 flex-col flex-wrap space-y-4 sm:max-w-screen-md"
+>
+	{#each $metrics as metric}
+  <Card.Root class="hover:scale-110">
+    <Card.Header>
+      <Card.Title>{metric.node_id}: {metric.cpu_model} </Card.Title>
+      <div class="flex flew-row justify-between p-1">
+      <Card.Root class="p-4 mt-5 hover:scale-110">
+        <Cpu />
+        Load: {(metric.cpu *1).toFixed(2)}%
+      </Card.Root>
+      <Card.Root class="p-4 mt-5 hover:scale-110">
+        <MemoryStick />
+        {(metric.used_memory / Math.pow(1024, 3)).toFixed(2)} GiB / {(metric.total_memory / Math.pow(1024, 3)).toFixed(2)} GiB
+      </Card.Root>
+      <Card.Root class="p-4 mt-5 hover:scale-110">
+        <Activity />
+        {convertSeconds(metric.uptime).days} days {convertSeconds(metric.uptime).hrs} hours {convertSeconds(metric.uptime).mnts} minutes
+      </Card.Root>
     </div>
-  </main>
+      <Card.Description>
+        Platform: {metric.platform} <br />
+        Used Storage: {(metric.used_space / Math.pow(1024, 3)).toFixed(0)} GiB / {(metric.total_space / Math.pow(1024, 3)).toFixed(0)} GiB
+      </Card.Description>
+    </Card.Header>
+    <Card.Content></Card.Content>
+  </Card.Root>
   
+	{/each}
+</div>
