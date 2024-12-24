@@ -1,38 +1,48 @@
-# sv
+# GoTrics Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The **GoTrics Frontend** is a real-time dashboard that displays system metrics received from the **GoTrics Server**. It fetches the metrics from the server and updates the UI every 5 seconds. Built using **Svelte** and **Tailwind CSS**, it provides a sleek, modern interface for viewing metrics.
 
-## Creating a project
+---
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Features
+
+- **Real-time Data**: Displays metrics in real-time, fetching data from the backend every 5 seconds.
+- **Responsive UI**: Built with Svelte and styled using Tailwind CSS, making it responsive and visually appealing.
+- **Data Fetching**: Periodically fetches data from the server and updates the UI with the latest metrics.
+- **No Authentication**: Simple and straightforward dashboard with no authentication layer.
+
+---
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/your_username/gotrics-front.git 
+cd gotrics-front
 ```
 
-## Developing
+2. Install dependencies:
+```bash
+npm install
+```
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+3. Start the development server:
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+This will start the frontend on `http://localhost:5173` by default.
 
-To create a production version of your app:
+---
 
-```bash
-npm run build
-```
+### Usage
 
-You can preview the production build with `npm run preview`.
+- On the frontend, the dashboard will display a list of nodes and their metrics (CPU and memory usage).
+- The frontend makes a GET request to the GoTrics Server every 5 seconds to fetch the latest metrics and update the UI.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+---
+
+### License
+
+This project is licensed under the MIT License.
